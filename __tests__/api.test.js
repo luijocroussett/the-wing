@@ -7,7 +7,7 @@ const server = 'http://localhost:3000';
  */
 
 describe('/xxxxx routes', () => {
-  it('#GET /appointements responds with the 200 status code', done => {
+  it('#GET / responds with the 200 status code', done => {
     request(server)
       .get('good route')
       .set('Accept', 'application/json')
@@ -16,7 +16,7 @@ describe('/xxxxx routes', () => {
     done();
   });
 
-  it('#GET /appointements responds with status code 404 when resources is not found', done => {
+  it('#GET / responds with status code 404 when resources is not found', done => {
     request(server)
       .get('fake route')
       .set('Accept', 'application/json')

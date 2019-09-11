@@ -21,7 +21,7 @@ module.exports = {
     else if (!level) {
       const error = new Error('Set a difficulty level');
       console.log('### ERROR #### ', error)
-      return res.status(500).send(error);
+      return res.status(404).send(error);
     }
     gamesObj[newGameId] = newGame(level, newGameId);
     return res.status(200).json(gamesObj[newGameId]);
