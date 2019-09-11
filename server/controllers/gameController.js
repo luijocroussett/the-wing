@@ -1,4 +1,4 @@
-const {newGame, move, markMine, restart} = require('../utils/gameCommands');
+const {newGame, move, markMine, restart, checkMine} = require('../utils/gameCommands');
 const gamesObj = require('../db/db')
 
 module.exports = {
@@ -49,9 +49,13 @@ module.exports = {
       return res.status(404).send(error);
     }
     let newGameObj = {};
-    if (command === 'move') newGameObj = move(coordinates, gamesObj[id]);
-    else if (command === 'flagSpace') newGameObj = markMine(coordinates, gamesObj[id]);
+    if (command === 'move') {
+      if (checkMine(coordinates, gamesObj[id])) 
+        return res.status(200).send(`You lost. There was a mine at row ${coordinates.row} column ${coordinates.column}`)
+      newGameObj = move(coordinates, gamesObj[id]);
+    }
     else if (command === 'restart') newGameObj = restart(coordinates, gamesObj[id]);
+    else if (command === 'flagSpace') newGameObj = markMine(coordinates, gamesObj[id]);
     else return res.status(404).send('Wrong command');
     // you can receive errors, like "invalid move"... etc.
     if (newGameObj instanceof Error) {

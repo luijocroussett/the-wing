@@ -162,4 +162,24 @@ module.exports = {
     gameObj.flags[row][column] = true;
     return gameObj;
   },
+
+  /**
+   * **********************
+   @author Luis Croussett
+
+   @method checkMine
+   @param {String}  coordinates
+   @param {Object}  gameObj
+   @returns {Boolean} true if there is a mine on passed coordinates, false otherwise
+   */
+
+  checkMine: (coordinates, gameObj) => {
+    // validate coordinates are good
+    const {column, row} = coordinates;
+    if (row >= gameObj.size.row || column >= gameObj.size.column) 
+      return new Error('Invalid Coordinates');
+    console.log(gameObj.mines, row, column, gameObj.mines[row], coordinates)
+    if (gameObj.mines.mineBoard[row] && gameObj.mines.mineBoard[row][column]) {console.log(true); return true;}
+    else return false;
+  },
 }
