@@ -61,36 +61,4 @@ module.exports = {
     gamesObj[id] = newGameObj;
     return res.status(200).json(newGameObj);
   },
-
-  restartGame: (req, res, next) => {
-    const {id} = req.params;
-    // validate that the game exists
-    if (!gamesObj[id]) {
-      const error = new Error('Invalid game ID');
-      console.log('### ERROR #### ', error);
-      return res.status(404).send(error);
-    }
-    gamesObj[id] = restart(gamesObj[id]);
-    return res.status(200).json(gamesObj[id])
-  },
-
-  flagSpace: (req, res, next) => {
-    const {id} = req.params;
-    const {coordinates} = req.body;
-    // validate that the game exists
-    if (!gamesObj[id]) {
-      const error = new Error('Invalid game ID');
-      console.log('### ERROR #### ', error);
-      return res.status(404).send(error);
-    }
-    const newGameObj = markMine(coordinates, gamesObj[id]);
-    // you can receive errors, like "invalid move"... etc.
-    if (newGameObj instanceof Error) {
-      console.log('### ERROR #### ', newGameObj);
-      return res.status(404).send(newGameObj);
-    }
-    // on success updae global object and send new game Object
-    gamesObj[id] = newGameObj;
-    return res.status(200).json(newGameObj)
-  }
 }

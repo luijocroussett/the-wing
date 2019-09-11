@@ -37,29 +37,61 @@ module.exports = {
     console.log('Creating game of level: ',level)
     let {columns, rows} = difficulty[level].size;
     let boardObj = {};
-    let columnsArray = [];
+    let emptyBoard = {};
     const minesObj = {
       count: 0,
       mineBoard: {}
     };
-    for (let index = 0; index < columns; index++) {
-      columnsArray.push('empty');
-    }
-    for (let index = 0; index < rows; index++) {
-      boardObj[index] = columnsArray;
+    for (let row = 0; row < rows; row++) {
+      for (let column = 0; column < columns; column++) {
+        if (!boardObj[row]) boardObj[row] = [];
+        boardObj[row].push(0);
+      }
     }
     while (minesObj.count < difficulty[level].numberOfMines) {
       let currentRow = Math.floor(Math.random() * difficulty[level].size.rows);
       let currentColumn = Math.floor(Math.random() * difficulty[level].size.columns);
-      console.log(currentRow, currentColumn,boardObj[currentRow][currentColumn], minesObj.count, difficulty[level].numberOfMines)
-      console.log(boardObj)
-      if (boardObj[currentRow][currentColumn] === 'empty') {
-        // boardObj[currentRow][currentColumn] = 'mine';
+      if (boardObj[currentRow][currentColumn] === 0) {
+        boardObj[currentRow][currentColumn] = 'mine';
+        let currentValue = 0;
+        if (currentRow < rows - 1) {
+          currentValue = boardObj[currentRow+1][currentColumn];
+          if (typeof currentValue === 'number') boardObj[currentRow+1][currentColumn] += 1;
+        }
+        if (currentRow > 0) {
+          currentValue = boardObj[currentRow-1][currentColumn];
+          if (typeof currentValue === 'number') boardObj[currentRow-1][currentColumn] += 1;
+        }
+        if (currentColumn < columns - 1) {
+          currentValue = boardObj[currentRow][currentColumn+1];
+          if (typeof currentValue === 'number') boardObj[currentRow][currentColumn+1] += 1;
+        }
+        if (currentColumn > 0) {
+          currentValue = boardObj[currentRow][currentColumn-1];
+          if (typeof currentValue === 'number') boardObj[currentRow][currentColumn-1] += 1;
+        }
+        if (currentRow < rows - 1 && currentColumn < columns - 1) {
+          currentValue = boardObj[currentRow+1][currentColumn+1];
+          if (typeof currentValue === 'number') boardObj[currentRow+1][currentColumn+1] += 1;
+        }
+        if (currentColumn > 0 && currentRow < rows - 1) {
+          currentValue = boardObj[currentRow+1][currentColumn-1];
+          if (typeof currentValue === 'number') boardObj[currentRow+1][currentColumn-1] += 1;
+        }
+        if (currentRow > 0 && currentColumn < columns - 1 ) {
+          currentValue = boardObj[currentRow-1][currentColumn+1];
+          if (typeof currentValue === 'number') boardObj[currentRow-1][currentColumn+1] += 1;
+        }
+        if (currentRow > 0 && currentColumn > 0) {
+          currentValue = boardObj[currentRow-1][currentColumn-1];
+          if (typeof currentValue === 'number') boardObj[currentRow-1][currentColumn-1] += 1;
+        }
         if (!minesObj.mineBoard[currentRow]) minesObj.mineBoard[currentRow] = {};
         minesObj.mineBoard[currentRow][currentColumn] = true;
         minesObj.count++
       }
     }
+    console.log(boardObj)
     return {
       id,
       size: {
@@ -69,6 +101,7 @@ module.exports = {
       board: boardObj, // board object
       mines: minesObj, // number of mines left and position of mines
       flags: {},
+      emptyBoard,
     }
   },
 
@@ -83,7 +116,8 @@ module.exports = {
 
   restart: (gameObj) => {
     const id = gameObj.id;
-    return {...gameObj, id}
+
+    return {...gameObj, id, board: gameObj.emptyBoard}
   },
 
   /**
