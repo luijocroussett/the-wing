@@ -37,7 +37,6 @@ module.exports = {
     console.log('Creating game of level: ',level)
     let {columns, rows} = difficulty[level].size;
     let boardObj = {};
-    let emptyBoard = {};
     const minesObj = {
       count: 0,
       mineBoard: {}
@@ -91,7 +90,6 @@ module.exports = {
         minesObj.count++
       }
     }
-    console.log(boardObj)
     return {
       id,
       size: {
@@ -101,7 +99,7 @@ module.exports = {
       board: boardObj, // board object
       mines: minesObj, // number of mines left and position of mines
       flags: {},
-      emptyBoard,
+      emptyBoard: JSON.parse(JSON.stringify(boardObj)),
     }
   },
 
@@ -116,8 +114,11 @@ module.exports = {
 
   restart: (gameObj) => {
     const id = gameObj.id;
-
-    return {...gameObj, id, board: gameObj.emptyBoard}
+    return {
+      ...gameObj, 
+      id, 
+      board: JSON.parse(JSON.stringify(gameObj.emptyBoard)) 
+    }
   },
 
   /**
@@ -156,8 +157,9 @@ module.exports = {
     const {column, row} = coordinates;
     if (row >= gameObj.size.row || column >= gameObj.size.column) 
       return new Error('Invalid Coordinates');
-    else if (gameObj.board[row][column] !== 'empty') return new Error('Position already flagged');
-    gameObj.board[row][column] = 'flagged';
+    else if (gameObj.flags[row][column]) return new Error('Position already flagged');
+    if (!gameObj.flag[row]) gameObj.flag[row] = {};
+    gameObj.flags[row][column] = true;
     return gameObj;
   },
 }
